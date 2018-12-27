@@ -1,6 +1,8 @@
 #pragma once
 
-
+#ifdef __cplusplus
+extern "C"{
+#endif
 
 #define RINGBUFFER_DEFAULT_DATA_SIZE 3990
 
@@ -30,3 +32,7 @@ void ringbuffer_init( ringbuffer_t *ringbuf );
 void ringbuffer_destory( ringbuffer_t *ringbuf );
 void ringbuffer_write( ringbuffer_t *ringbuf, const unsigned char *buffer, size_t size );
 size_t ringbuffer_read( ringbuffer_t *ringbuf, unsigned char *buffer, size_t size );
+
+#ifdef __cplusplus
+};
+#endif
