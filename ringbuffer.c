@@ -1,4 +1,4 @@
-#include <stdio.h>
+ï»¿#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
@@ -89,9 +89,10 @@ int ringbuffer_write( ringbuffer_t *ringbuf, const unsigned char *buffer, size_t
 	if ( ringbuf->length == 0 )
 	{
 		ringbuf_block->noffset = 0;
+		ringbuf_block->cursize = 0;
 	}
 
-	//Èç¹ûringbufferµÄ·Ö¿é×ã¹»ÈÝÄÉËùÓÐÊý¾Ý ÔòÖ±½Ó¸´ÖÆÊý¾Ý½øÈ¥
+	//å¦‚æžœringbufferçš„åˆ†å—è¶³å¤Ÿå®¹çº³æ‰€æœ‰æ•°æ® åˆ™ç›´æŽ¥å¤åˆ¶æ•°æ®è¿›åŽ»
 	if ( ringbuf_block->maxsize > ringbuf_block->cursize + size )
 	{
 		memcpy( &ringbuf_block->data[ringbuf_block->cursize], buffer, size );
@@ -101,14 +102,14 @@ int ringbuffer_write( ringbuffer_t *ringbuf, const unsigned char *buffer, size_t
 	}
 
 
-	//ringbuffer·Ö¿éÎÞ·¨ÈÝÄÉËùÓÐÊý¾Ý,Ñ­»·Ð´Èë²»Í¬·Ö¿é
+	//ringbufferåˆ†å—æ— æ³•å®¹çº³æ‰€æœ‰æ•°æ®,å¾ªçŽ¯å†™å…¥ä¸åŒåˆ†å—
 	size_t lastsize = size;
 
 	const unsigned char *input_data = buffer;
 
 	while ( lastsize > 0 )
 	{
-		if ( ringbuf_block->maxsize - ringbuf_block->cursize == 0 )	//Èç¹ûringbuf_dataÃ»ÓÐÊ£ÓàÊý¾Ý ÔòÖ´ÐÐÐÂ½¨Êý¾Ý
+		if ( ringbuf_block->maxsize - ringbuf_block->cursize == 0 )	//å¦‚æžœringbuf_dataæ²¡æœ‰å‰©ä½™æ•°æ® åˆ™æ‰§è¡Œæ–°å»ºæ•°æ®
 		{
 			ringbuf_block = ringbuffer_block_new( lastsize );
 			if ( ringbuf_block == NULL )
@@ -118,19 +119,19 @@ int ringbuffer_write( ringbuffer_t *ringbuf, const unsigned char *buffer, size_t
 			MPListInsertToHead( &ringbuf->block_head, &ringbuf_block->Entry );
 			ringbuf->block_count++;
 
-			//×·¼ÓÊý¾Ýµ½ÉêÇëµÄ·Ö¿éÄÚ ²¢¸üÐÂÊ£Óà´óÐ¡
+			//è¿½åŠ æ•°æ®åˆ°ç”³è¯·çš„åˆ†å—å†… å¹¶æ›´æ–°å‰©ä½™å¤§å°
 			size_t copylen = min( ringbuf_block->maxsize - ringbuf_block->cursize, lastsize );
 			memcpy( &ringbuf_block->data[ringbuf_block->cursize], input_data, copylen );
 			ringbuf_block->cursize += copylen;
 
-			//ÒÆ¶¯Ö¸ÕëÎ»ÖÃ
+			//ç§»åŠ¨æŒ‡é’ˆä½ç½®
 			input_data += copylen;
 			lastsize -= copylen;
 			ringbuf->length += copylen;
 		}
 		else
 		{
-			//×·¼ÓÊý¾Ý
+			//è¿½åŠ æ•°æ®
 			size_t copylen = min( ringbuf_block->maxsize - ringbuf_block->cursize, lastsize );
 			memcpy( &ringbuf_block->data[ringbuf_block->cursize], input_data, copylen );
 
@@ -167,15 +168,15 @@ size_t ringbuffer_read( ringbuffer_t *ringbuf, unsigned char *buffer, size_t siz
 		target += readlen;
 		ringbuf->length -= readlen;
 
-		//BLOCKÊý¾ÝÈ«²¿¶ÁÈ¡Íê³ÉÅÐ¶Ï
+		//BLOCKæ•°æ®å…¨éƒ¨è¯»å–å®Œæˆåˆ¤æ–­
 		if ( current_block->noffset == current_block->cursize )
 		{
-			if ( current_block->cursize < current_block->maxsize )//Èç¹ûÊý¾ÝÒÑ¾­¶ÁÍêÁË¾ÍÌø³öÑ­»·
+			if ( current_block->cursize < current_block->maxsize )//å¦‚æžœæ•°æ®å·²ç»è¯»å®Œäº†å°±è·³å‡ºå¾ªçŽ¯
 			{
 				break;
 			}
 
-			//BLOCKÈ«²¿±»¶ÁÍê£¬¶øÇÒBLOCKÒÑ¾­È«²¿±»Ê¹ÓÃÔòÊÍ·ÅµôÕâ¿éÄÚ´æ
+			//BLOCKå…¨éƒ¨è¢«è¯»å®Œï¼Œè€Œä¸”BLOCKå·²ç»å…¨éƒ¨è¢«ä½¿ç”¨åˆ™é‡Šæ”¾æŽ‰è¿™å—å†…å­˜
 			ringbuffer_block_t *ringbuf_temp = current_block;
 
 			current_block = (ringbuffer_block_t *)current_block->Entry.prev;
@@ -184,7 +185,7 @@ size_t ringbuffer_read( ringbuffer_t *ringbuf, unsigned char *buffer, size_t siz
 			ringbuffer_block_free( ringbuf_temp );
 			ringbuf->block_count--;
 
-			if ( MPListIsEmpty( &ringbuf->block_head ) )	//Èç¹ûÁÐ±íÊÇ¿ÕµÄ¾ÍÖ±½ÓÌø³öÑ­»·
+			if ( MPListIsEmpty( &ringbuf->block_head ) )	//å¦‚æžœåˆ—è¡¨æ˜¯ç©ºçš„å°±ç›´æŽ¥è·³å‡ºå¾ªçŽ¯
 				break;
 		}
 	}
