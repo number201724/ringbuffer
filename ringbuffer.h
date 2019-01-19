@@ -1,4 +1,4 @@
-#pragma once
+ï»¿#pragma once
 
 #ifdef __cplusplus
 extern "C"{
@@ -17,10 +17,10 @@ typedef struct ringbuffer_block_s
 	size_t noffset;
 }ringbuffer_block_t;
 
-//´´½¨Ò»¿éringbufferµÄBLOCK
+//åˆ›å»ºä¸€å—ringbufferçš„BLOCK
 ringbuffer_block_t *ringbuffer_block_new( size_t nSize );
 
-//ÊÍ·ÅÒ»¿éringbufferµÄBLOCK
+//é‡Šæ”¾ä¸€å—ringbufferçš„BLOCK
 void ringbuffer_block_free( ringbuffer_block_t *ringbuf_block );
 
 typedef struct ringbuffer_s
@@ -31,14 +31,14 @@ typedef struct ringbuffer_s
 }ringbuffer_t;
 
 void ringbuffer_init( ringbuffer_t *ringbuf );
-void ringbuffer_destory( ringbuffer_t *ringbuf );
+void ringbuffer_destroy( ringbuffer_t *ringbuf );
 void ringbuffer_clear( ringbuffer_t *ringbuf );
 int ringbuffer_write( ringbuffer_t *ringbuf, const unsigned char *buffer, size_t size );
 
-//¶ÁÈ¡Êı¾İ ·µ»ØÊı¾İ³¤¶È ÓĞ¿ÉÄÜ²»»á¶ÁÍê
+//è¯»å–æ•°æ® è¿”å›æ•°æ®é•¿åº¦ æœ‰å¯èƒ½ä¸ä¼šè¯»å®Œ
 size_t ringbuffer_read( ringbuffer_t *ringbuf, unsigned char *buffer, size_t size );
 
-//¶ÁÈ¡È«²¿Êı¾İ »º³åÇøÄÚµÄÊı¾İĞ¡ÓÚ´«ÈëµÄ´óĞ¡Ôò·µ»Ø0
+//è¯»å–å…¨éƒ¨æ•°æ® ç¼“å†²åŒºå†…çš„æ•°æ®å°äºä¼ å…¥çš„å¤§å°åˆ™è¿”å›0
 size_t ringbuffer_read2( ringbuffer_t *ringbuf, unsigned char *buffer, size_t size );
 
 #ifdef __cplusplus

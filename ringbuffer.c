@@ -52,7 +52,7 @@ void ringbuffer_clear( ringbuffer_t *ringbuf )
 	ringbuf->length = 0;
 }
 
-void ringbuffer_destory( ringbuffer_t *ringbuf )
+void ringbuffer_destroy( ringbuffer_t *ringbuf )
 {
 	ringbuffer_block_t *ringbuf_data;
 
